@@ -3,7 +3,7 @@
 
 Spring Boot + MyBatis + MySQL + Gradle + IntelliJ
 
-배포주소 http://simpleboard-env.eba-xn3f9cwt.ap-northeast-2.elasticbeanstalk.com
+배포주소 https://basicboard110.herokuapp.com
 
 회원 (가입,로그인,권한)
 
