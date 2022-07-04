@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <link th:href="@{/css/bootstrap.min.css}"
+          href="../../css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="container" style="max-width: 600px">
+
+    <div class="py-5 text-center">
+        <h2>나의 게시글 목록</h2>
+    </div>
+
+    <div class="row">
+
+        <div class="col">
+            <button class="btn btn-primary float-end"
+                    th:onclick="|location.href='@{/}'|" type="button">
+                HOME
+            </button>
+        </div>
+
+    </div>
+
+    <hr class="my-4">
+    <div>
+        <table class="table">
+
+            <thead>
+            <tr>
+                <th>번호</th>
+                <th>작성자</th>
+                <th>제목</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="board : ${boards}">
+                <td>
+                    <a th:text="${board.id}">
+                        번호
+                    </a>
+                </td>
+                <td>
+                    <a th:text="${board.name}">
+                        작성자
+                    </a>
+                </td>
+                <td>
+                    <a th:href="@{|/board/info/${board.id}|}"
+                       th:text="${board.title}">
+                        제목
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+
+        </table>
+    </div>
+</div> <!-- /container -->
+</body>
+</html>

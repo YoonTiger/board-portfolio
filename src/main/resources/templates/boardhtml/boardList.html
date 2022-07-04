@@ -1,0 +1,171 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <link th:href="@{/css/bootstrap.min.css}"
+          href="../../css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="container" style="max-width: 700px">
+
+    <div class="py-5 text-center">
+        <h2>게시글 목록</h2>
+    </div>
+
+    <div class="row">
+
+        <div class="col col-8">
+            <a th:href="|@{/member/info}${pageDTO.makeQueryString(pageDTO.currentPageNo)}|"
+               class="btn btn-primary" >내 정보</a>
+        </div>
+
+    </div>
+
+    <hr class="my-4">
+
+    <div>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>번호</th>
+                <th>작성자</th>
+                <th>제목</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="board : ${list}">
+                <td>
+                    <a th:text="${board.id}">
+                        번호
+                    </a>
+                </td>
+                <td>
+                    <a th:text="${board.name}">
+                        작성자
+                    </a>
+                </td>
+                <td>
+                    <a href="board.html"
+                       th:text="${board.title}"
+                       th:href="|@{/board/info/{id}(id=${board.id})}${pageDTO.makeQueryString(pageDTO.currentPageNo)}|">
+                        제목
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <nav th:if="${pageDTO != null and pageDTO.paginationInfo.totalRecordCount > 0}"
+             th:object="${pageDTO.paginationInfo}" th:with="info=${pageDTO.paginationInfo}"
+             class="text-center" aria-label="Page navigation">
+
+            <ul class="pagination pagination-sm justify-content-center">
+
+                <li class="page-item" th:if="*{hasPreviousPage == true}"
+                    th:onclick="movePage([[ ${#request.requestURI} ]], [[ ${pageDTO.makeQueryString(1)} ]])">
+                    <a class="page-link" href="javascript:void(0)" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+
+                <li class="page-item" th:if="*{hasPreviousPage == true}"
+                    th:onclick="movePage([[ ${#request.requestURI} ]], [[ ${pageDTO.makeQueryString(info.firstPage - 1)} ]])">
+                    <a class="page-link" href="javascript:void(0)" aria-label="Previous">
+                        <span aria-hidden="true">&lsaquo;</span>
+                    </a>
+                </li>
+
+                <li class="page-item" th:each="pageNo : *{#numbers.sequence( firstPage, lastPage )}"
+                    th:classappend="${pageNo == pageDTO.currentPageNo} ? 'active'">
+                    <a class="page-link" href="javascript:void(0)" th:text="${pageNo}"
+                       th:onclick="movePage([[ ${#request.requestURI} ]], [[ ${pageDTO.makeQueryString(pageNo)} ]])"></a>
+                </li>
+
+                <li class="page-item" th:if="*{hasNextPage == true}"
+                    th:onclick="movePage([[ ${#request.requestURI} ]], [[ ${pageDTO.makeQueryString(info.lastPage + 1)} ]])">
+                    <a class="page-link" href="javascript:void(0)" aria-label="Next">
+                        <span aria-hidden="true">&rsaquo;</span>
+                    </a>
+                </li>
+
+                <li class="page-item" th:if="*{hasNextPage == true}"
+                    th:onclick="movePage([[ ${#request.requestURI} ]], [[ ${pageDTO.makeQueryString(info.totalPageCount)} ]])">
+                    <a class="page-link" href="javascript:void(0)" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+
+            </ul>
+        </nav>
+
+
+
+        <form th:object="${pageDTO}" th:action="@{/board/list}" id="searchForm" method="get"
+              class="form-horizontal" role="form">
+
+            <input type="hidden" name="currentPageNo" value="1"/>
+            <input type="hidden" name="recordsPerPage" th:value="*{recordsPerPage}"/>
+            <input type="hidden" name="pageSize" th:value="*{pageSize}"/>
+
+            <div class="d-flex justify-content-center">
+
+                <div class="" style="padding-right:5px">
+                    <select class="form-select form-select-sm" name="searchType" id="searchType">
+                        <option value="all" th:selected="${pageDTO.searchType == 'all'}">전체</option>
+                        <option value="title">제목</option> <!--안해도된다-->
+                        <option value="content" th:selected="${pageDTO.searchType == 'content'}">본문</option>
+                        <option value="name" th:selected="${pageDTO.searchType == 'name'}">작성자</option>
+                    </select>
+                </div>
+
+                <div class="" style="padding-right:5px">
+                    <input th:value="*{searchKeyword}" name="searchKeyword"
+                           type="text" class="form-control form-control-sm">
+                </div>
+
+                <div class="">
+                    <button class="btn btn-sm btn-primary" type="submit">검색</button>
+                </div>
+
+            </div>
+        </form>
+
+
+        <div class="row">
+            <div class="col">
+                <button th:text="#{button.home}" th:onclick="|location.href='@{/}'|"
+                        class="btn btn-primary float-start" type="button">
+                    Home
+                </button>
+            </div>
+            <div class="col">
+                <a th:text="#{button.write}" th:href="|@{/board/write}${pageDTO.makeQueryString(pageDTO.currentPageNo)}|"
+                        class="btn btn-primary float-end" type="button">
+                    write
+                </a>
+            </div>
+        </div>
+
+        <th:block layout:fragment="script">
+            <script th:inline="javascript">
+<!--                <![CDATA[-->
+
+                    function movePage(uri, queryString){
+                        location.href = uri + queryString;
+                    }
+
+<!--                ]]>-->
+
+            </script>
+        </th:block>
+
+    </div>
+
+
+</div> <!-- /container -->
+</body>
+</html>

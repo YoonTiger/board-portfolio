@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="basic.board.repository.BoardMapper">
+
+    <resultMap id="boardMap" type="board">
+        <id column="board_id" property="id"/>
+        <result column="board_name" property="name"/>
+        <result column="board_title" property="title"/>
+        <result column="board_content" property="content"/>
+
+        <association property="member" column="member_id" resultMap="memberMap"/>
+    </resultMap>
+
+    <resultMap id="memberMap" type="member">
+        <id column="member_id" property="id"/>
+        <result column="member_name" property="name"/>
+        <result column="member_password" property="password"/>
+        <result column="member_city" property="city"/>
+        <result column="member_street" property="street"/>
+        <result column="member_zipcode" property="zipcode"/>
+
+    </resultMap>
+
+
+    <insert id="save" parameterType="board" useGeneratedKeys="true" keyProperty="id">
+        INSERT
+        INTO
+        Board(board_name,board_title,board_content,member_id)
+        VALUES(#{name},#{title},#{content},#{member.id})
+    </insert>
+
+
+    <update id="update" parameterType="board">
+        UPDATE
+        Board
+        SET
+        board_name=#{name},board_title=#{title},board_content=#{content}
+        WHERE board_id=#{id}
+    </update>
+
+
+    <delete id="delete" parameterType="Long">
+        DELETE
+        FROM
+        Board
+        WHERE board_id=#{id}
+    </delete>
+
+
+    <select id="findAll" resultType="board" resultMap="boardMap">
+        SELECT *
+        FROM Board
+        WHERE 1=1
+        <choose>
+            <when test="'title' == searchType">
+                AND board_title LIKE CONCAT('%', #{searchKeyword}, '%')
+            </when>
+            <when test="'content' == searchType">
+                AND board_content LIKE CONCAT('%', #{searchKeyword}, '%')
+            </when>
+            <when test="'name' == searchType">
+                AND board_name LIKE CONCAT('%', #{searchKeyword}, '%')
+            </when>
+            <when test="'all' == searchType">
+                AND board_title LIKE CONCAT('%', #{searchKeyword}, '%')
+                OR board_content LIKE CONCAT('%', #{searchKeyword}, '%')
+                OR board_name LIKE CONCAT('%', #{searchKeyword}, '%')
+            </when>
+        </choose>
+        ORDER BY board_id DESC
+        LIMIT #{paginationInfo.firstRecordIndex},#{recordsPerPage}
+    </select>
+
+
+    <select id="findTotalSizeForSearch" resultType="int">
+        SELECT
+        COUNT(*)
+        FROM
+        Board
+            <if test="'title' == searchType">
+                WHERE board_title LIKE CONCAT('%', #{searchKeyword}, '%')
+            </if>
+            <if test="'content' == searchType">
+                WHERE board_content LIKE CONCAT('%', #{searchKeyword}, '%')
+            </if>
+            <if test="'name' == searchType">
+                WHERE board_name LIKE CONCAT('%', #{searchKeyword}, '%')
+            </if>
+            <if test="'all' == searchType">
+                WHERE board_title LIKE CONCAT('%', #{searchKeyword}, '%')
+                OR board_content LIKE CONCAT('%', #{searchKeyword}, '%')
+                OR board_name LIKE CONCAT('%', #{searchKeyword}, '%')
+            </if>
+    </select>
+
+
+    <select id="selectBoardTotalCount" resultType="int">
+        SELECT
+        COUNT(*)
+        FROM
+        Board
+    </select>
+
+
+    <select id="findById" resultType="board" parameterType="Long" resultMap="boardMap">
+        SELECT *
+        FROM Board
+        WHERE board_id=#{id}
+    </select>
+
+    <select id="findByMemberId" resultType="board" parameterType="Long" resultMap="boardMap">
+        SELECT *
+        FROM
+        Board
+        WHERE member_id=#{id}
+    </select>
+
+</mapper>

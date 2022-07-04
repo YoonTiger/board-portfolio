@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <link th:href="@{/css/bootstrap.min.css}"
+          href="../../css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div th:object="${board}" class="container" style="max-width: 600px">
+
+    <div class="py-5 text-center">
+        <h2>게시물 상세</h2>
+    </div>
+
+    <div>
+        <label>번호</label>
+        <input th:field="*{id}" type="text" class="form-control" readonly>
+    </div>
+
+    <div>
+        <label>작성자</label>
+        <input th:field="*{name}" type="text" class="form-control" readonly>
+    </div>
+
+    <div>
+        <label>제목</label>
+        <input th:field="*{title}" type="text" class="form-control" readonly>
+    </div>
+
+    <div>
+        <label>내용</label>
+        <textarea th:field="*{content}" class="form-control" readonly></textarea>
+    </div>
+
+    <hr class="my-4">
+
+    <div class="row">
+
+        <div class="col-2">
+            <a th:href="|@{/board/edit/{id}(id=${board.id})}${pageDTO.makeQueryString(pageDTO.currentPageNo)}|"
+               th:text="#{button.update}" class="btn btn-primary btn" type="button">
+                update
+            </a>
+        </div>
+
+        <div class="col-2">
+            <a th:href="|@{/board/delete/{id}(id=${board.id})}${pageDTO.makeQueryString(pageDTO.currentPageNo)}|"
+               th:text="#{button.delete}" class="btn btn-danger btn" type="button">
+                delete
+            </a>
+        </div>
+
+        <div class="col">
+            <a th:href="|@{/board/list}${pageDTO.makeQueryString(pageDTO.currentPageNo)}|"
+               th:text="#{button.cancel}" class="btn btn-secondary btn float-end" type="button">
+                back
+            </a>
+        </div>
+
+    </div>
+</div> <!-- /container -->
+</body>
+</html>
